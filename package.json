@@ -1,0 +1,15 @@
+{
+  "name": "vsync",
+  "description": "A simple client/server app for synchronized video playback",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "run": "node --experimental-modules --max-old-space-size=8192 ./server/main.js",
+    "debug": "node --experimental-modules --inspect-brk=9229 ./server/main.js"
+  },
+  "author": "Vitaly Kravchenko",
+  "license": "MIT",
+  "dependencies": {
+    "socket.io": "^2.3.0"
+  }
+}
