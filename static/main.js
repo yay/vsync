@@ -8,31 +8,54 @@ socket.on('disconnect', () => {
     alert('Connection lost.');
 });
 
-let suppressEmitSeek = false;
+let seekedRemotely = false;
+let playedRemotely = false;
+let pausedRemotely = false;
+
 socket.on('seek', time => {
-    suppressEmitSeek = true;
+    seekedRemotely = true;
+    playedRemotely = true;
     player.currentTime = time;
+    player.play();
 });
 
-socket.on('play', () => player.play());
-socket.on('pause', () => player.pause());
+socket.on('play', time => {
+    seekedRemotely = true;
+    playedRemotely = true;
+    player.currentTime = time;
+    player.play();
+});
+socket.on('pause', time => {
+    seekedRemotely = true;
+    pausedRemotely = true;
+    player.currentTime = time;
+    player.pause();
+});
 
 player.focus();
 player.addEventListener('blur', () => player.focus());
 updatePlayBtn();
 
 player.addEventListener('play', () => {
-    socket.emit('play');
+    if (playedRemotely) {
+        playedRemotely = false;
+        return;
+    }
+    socket.emit('play', player.currentTime);
     updatePlayBtn();
 });
 player.addEventListener('pause', () => {
-    socket.emit('pause');
+    if (pausedRemotely) {
+        pausedRemotely = false;
+        return;
+    }
+    socket.emit('pause', player.currentTime);
     updatePlayBtn();
 });
 
 player.addEventListener('seeked', () => {
-    if (suppressEmitSeek) {
-        suppressEmitSeek = false;
+    if (seekedRemotely) {
+        seekedRemotely = false;
         return;
     }
     socket.emit('seek', player.currentTime);

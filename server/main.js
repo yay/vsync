@@ -71,7 +71,7 @@ routes[''] = async function (params) {
     <link href="static/main.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-    <video id="player" controls>
+    <video id="player" muted="muted" controls>
         <source src="http://${host}:${port}/video" type="video/mp4">
     </video>
     <div id="player-controls">
@@ -165,11 +165,11 @@ io.on('connection', client => {
         // send to all clients except sender
         client.broadcast.emit('seek', time);
     });
-    client.on('play', () => {
-        client.broadcast.emit('play');
+    client.on('play', time => {
+        client.broadcast.emit('play', time);
     });
-    client.on('pause', () => {
-        client.broadcast.emit('pause');
+    client.on('pause', time => {
+        client.broadcast.emit('pause', time);
     });
 });
 
